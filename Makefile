@@ -1,23 +1,15 @@
-CC = gcc
-SRC = *.c
-SRCDIR = src
-FLAGS = -Wall -Wfatal-errors -Wextra -g
-BIN = todo
-PKGDIR = pkg
-RFLAGS = -Wall -Wfatal-errors -Wextra -O3
+CC = go
+CMD = build
+PURGE = clean
+REL_FLAGS = -ldflags="-s -w"
 
 all: clean debug
 
 debug:
-	$(CC) -o $(BIN) $(SRCDIR)/$(SRC) $(FLAGS)
+	$(CC) $(CMD)
 
-release: | $(PKGDIR)
-	$(CC) -o $(PKGDIR)/$(BIN) $(SRCDIR)/$(SRC) $(RFLAGS)
-	strip -s $(PKGDIR)/$(BIN)
-
-$(PKGDIR):
-	mkdir $@
+release:
+	$(CC) $(CMD) $(REL_FLAGS)
 
 clean:
-	rm -rf $(PKGDIR)
-	rm -f $(BIN)
+	$(CC) $(PURGE)

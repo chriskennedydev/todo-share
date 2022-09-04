@@ -20,34 +20,38 @@ int main(int argc, char** argv) {
     }
 
     char* homedir = getenv("HOME");
-    char* tododir = strncat(homedir, "/.todo", sizeof(homedir) - 1);
+    char tododir[4096];
     char* int_conv;
     struct stat st = {0};
+
+    strncpy(tododir, homedir, sizeof(tododir) - 1);
+    tododir[4095] = '\0';
+    strncat(tododir, "/.todo", sizeof(homedir) - 1);
 
     if (stat(tododir, &st) != 0) {
         mkdir(tododir, 0744);
     }
 
-    char* todofile = strncat(tododir, "/todo", sizeof(tododir) - 1);
+    strncat(tododir, "/todo", sizeof(tododir) - 1);
 
 
     if (strncmp(argv[1], "add", sizeof(argv[1]) - 1) == 0) {
-        add_todo(argc, argv, todofile);
+        add_todo(argc, argv, tododir);
     }
     else if (strncmp(argv[1], "list", sizeof(argv[1]) - 1) == 0) {
-        list_todos(todofile);
+        list_todos(tododir);
     }
     else if (strncmp(argv[1], "del", sizeof(argv[1]) - 1) == 0) {
         int todo_number = strtol(argv[2], &int_conv, sizeof(argv[2]));
-        delete_todo(todo_number, todofile);
+        delete_todo(todo_number, tododir);
     }
     else if (strncmp(argv[1], "update", sizeof(argv[1]) - 1) == 0) {
         int todo_number = strtol(argv[2], &int_conv, sizeof(argv[2]));
-        update_todo(todo_number, argc, argv, todofile);
+        update_todo(todo_number, argc, argv, tododir);
     }
     else if (strncmp(argv[1], "done", sizeof(argv[1]) - 1) == 0) {
         int todo_number = strtol(argv[2], &int_conv, sizeof(argv[2]));
-        complete_todo(todo_number, todofile);
+        complete_todo(todo_number, tododir);
     }
     else {
         printf("Invalid option\n");
