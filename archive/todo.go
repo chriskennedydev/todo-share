@@ -129,7 +129,7 @@ func delTodo(todoNum int, fileName string) {
 		fmt.Println(err)
 		return
 	}
-	
+
 	fd, err := os.Create(fileName)
 	if err != nil {
 		fmt.Println(err)
@@ -140,7 +140,7 @@ func delTodo(todoNum int, fileName string) {
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
 		if counter != todoNum {
-			fd.WriteString(scanner.Text()+"\n")
+			fd.WriteString(scanner.Text() + "\n")
 		}
 		counter++
 	}
@@ -178,7 +178,7 @@ func updateTodo(todoNum int, updatedTodo []string, fileName string) {
 		if counter == todoNum {
 			fd.WriteString(longTodo)
 		} else {
-			fd.WriteString(scanner.Text()+"\n")
+			fd.WriteString(scanner.Text() + "\n")
 		}
 		counter++
 	}
@@ -207,4 +207,3 @@ func listTodos(fileName string) {
 		counter++
 	}
 }
-

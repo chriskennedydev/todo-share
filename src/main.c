@@ -42,15 +42,15 @@ int main(int argc, char** argv) {
         list_todos(tododir);
     }
     else if (strncmp(argv[1], "del", sizeof(argv[1]) - 1) == 0) {
-        int todo_number = strtol(argv[2], &int_conv, sizeof(argv[2]));
+        int todo_number = strtol(argv[2], &int_conv, 0);
         delete_todo(todo_number, tododir);
     }
     else if (strncmp(argv[1], "update", sizeof(argv[1]) - 1) == 0) {
-        int todo_number = strtol(argv[2], &int_conv, sizeof(argv[2]));
+        int todo_number = strtol(argv[2], &int_conv, 0);
         update_todo(todo_number, argc, argv, tododir);
     }
     else if (strncmp(argv[1], "done", sizeof(argv[1]) - 1) == 0) {
-        int todo_number = strtol(argv[2], &int_conv, sizeof(argv[2]));
+        int todo_number = strtol(argv[2], &int_conv, 0);
         complete_todo(todo_number, tododir);
     }
     else {
@@ -90,6 +90,11 @@ void list_todos(char* todo_file) {
     int count = 1;
     char todo[4096];
 
+    if (lines == -1) {
+        printf("Need to create a todo first!\n");
+        return;
+    }
+
     printf("Todo List\n");
     printf("---------\n");
 
@@ -115,9 +120,16 @@ void delete_todo(int todo_num, char* todo_file) {
     FILE* fp = fopen(todo_file, "r");
     FILE* tmp = tmpfile();
 
+    if (lines == -1) {
+        printf("Need to create a todo first!\n");
+        return;
+    }
+
     for (int i = 0; i < lines; i++) {
-        if (fgets(todo, sizeof(todo), fp) != NULL && todo_num != counter) {
-            fprintf(tmp, todo);
+        if (fgets(todo, sizeof(todo), fp) != NULL) {
+            if (todo_num != counter) {
+                fprintf(tmp, todo);
+           }
         }
         counter++;
     }
@@ -143,6 +155,11 @@ void update_todo(int todo_num, int todo_length, char** new_todo, char* todo_file
     char long_todo[4096] = { '\0' };
     FILE* fp = fopen(todo_file, "r");
     FILE* tmp = tmpfile();
+
+    if (lines == -1) {
+        printf("Need to create a todo first!\n");
+        return;
+    }
 
     if (todo_length > 3) {
         for (int i = 3; i < todo_length; i++) {
@@ -187,9 +204,9 @@ void complete_todo(int todo_num, char* todo_file) {
     char todo[4096];
     FILE* fp = fopen(todo_file, "r");
     FILE* tmp = tmpfile();
-
-    if (fp == NULL) {
-        printf("Error opening file\n");
+    
+    if (lines == -1) {
+        printf("Need to create a todo first!\n");
         return;
     }
 
@@ -232,6 +249,11 @@ void complete_todo(int todo_num, char* todo_file) {
 int get_lines_in_file(char* todo_file) {
     FILE* fp = fopen(todo_file, "r");
     int count = 0;
+
+    if (fp == NULL) {
+        printf("File does not exist!\n");
+        return -1;
+    }
 
     for (char c = getc(fp); c != EOF; c = getc(fp)) {
         if (c == '\n') {
