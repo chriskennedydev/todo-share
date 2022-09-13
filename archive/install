@@ -1,6 +1,0 @@
-#!/bin/bash
-
-rm -f todo
-echo "#!/usr/bin/env ruby" > todo
-cat todo.rb >> todo
-chmod u+x todo
