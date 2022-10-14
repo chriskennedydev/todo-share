@@ -13,10 +13,11 @@ void delete_todo(int todo_num, char* todo_file);
 void update_todo(int todo_num, int todo_length, char** new_todo, char* todo_file);
 void complete_todo(int todo_num, char* todo_file);
 int get_lines_in_file(char* todo_file);
+void usage();
 
 int main(int argc, char** argv) {
     if (argc == 1) {
-        printf("Need at least one argument!\n");
+	usage();
         return -1;
     }
 
@@ -55,8 +56,7 @@ int main(int argc, char** argv) {
         complete_todo(todo_number, tododir);
     }
     else {
-        printf("Invalid option\n");
-        return -1;
+	usage();
     }
 
 
@@ -312,4 +312,14 @@ int get_lines_in_file(char* todo_file) {
     fclose(fp);
 
     return count;
+}
+
+void usage() {
+    printf("todo: todo cmd item(s)\n");
+    printf("cmd: add | del | done | list | update\n");
+    printf("add: todo add my todo\n");
+    printf("del: todo del 2\n");
+    printf("done: todo done 1\n");
+    printf("update: todo update 2 new todo\n");
+    printf("list: todo list\n");
 }
