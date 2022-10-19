@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <errno.h>
 
 void add_todo(int todo_length, char** todo, char* todo_file);
 void list_todos(char* todo_file);
@@ -44,14 +43,26 @@ int main(int argc, char** argv) {
         list_todos(tododir);
     }
     else if (strncmp(argv[1], "del", sizeof(argv[1]) - 1) == 0) {
+	if (argc < 3) {
+	    usage();
+	    return -1;
+	}
         int todo_number = strtol(argv[2], &int_conv, 0);
         delete_todo(todo_number, tododir);
     }
     else if (strncmp(argv[1], "update", sizeof(argv[1]) - 1) == 0) {
+	if (argc < 4) {
+	    usage();
+	    return -1;
+	}
         int todo_number = strtol(argv[2], &int_conv, 0);
         update_todo(todo_number, argc, argv, tododir);
     }
     else if (strncmp(argv[1], "done", sizeof(argv[1]) - 1) == 0) {
+	if (argc < 3) {
+	    usage();
+	    return -1;
+	}
         int todo_number = strtol(argv[2], &int_conv, 0);
         complete_todo(todo_number, tododir);
     }

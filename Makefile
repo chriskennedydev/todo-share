@@ -1,8 +1,8 @@
-CC = clang
+CC = gcc
 BIN = todo
 SRC = *.c
 SRCDIR = src
-D_FLAGS = -g -Wall -Wfatal-errors -Wextra 
+D_FLAGS = -g -Wall -Wfatal-errors -Werror -Wextra -fanalyzer
 R_FLAGS = -Wall -Wfatal-errors -Wextra -O3
 PKGDIR = pkg
 
