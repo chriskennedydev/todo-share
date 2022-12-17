@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     struct stat st = {0};
 
     strncpy(tododir, homedir, sizeof(tododir) - 1);
-    strncat(tododir, "/.todo", sizeof(homedir) - 1);
+    strncat(tododir, "/.todo", sizeof(tododir) - 1);
 
     if (stat(tododir, &st) != 0) {
         mkdir(tododir, 0744);
@@ -338,5 +338,4 @@ void usage() {
     printf("update: todo update 2 new todo\n");
     printf("list: todo list\n");
 }
-
 
