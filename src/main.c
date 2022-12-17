@@ -11,13 +11,12 @@ void list_todos(char* todo_file);
 void delete_todo(int todo_num, char* todo_file);
 void update_todo(int todo_num, int todo_length, char** new_todo, char* todo_file);
 void complete_todo(int todo_num, char* todo_file);
-void clear_screen();
 int get_lines_in_file(char* todo_file);
 void usage();
 
 int main(int argc, char** argv) {
     if (argc == 1) {
-	usage();
+        usage();
         return -1;
     }
 
@@ -36,41 +35,44 @@ int main(int argc, char** argv) {
     strncat(tododir, "/todo", sizeof(tododir) - 1);
     tododir[4095] = '\0';
 
+    char *cmd = argv[1];
 
-    if (strncmp(argv[1], "add", sizeof(argv[1]) - 1) == 0) {
+    if (strncmp(cmd, "add", strlen(cmd)) == 0) {
         add_todo(argc, argv, tododir);
     }
-    else if (strncmp(argv[1], "list", sizeof(argv[1]) - 1) == 0) {
+    else if (strncmp(cmd, "list", strlen(cmd)) == 0) {
         list_todos(tododir);
     }
-    else if (strncmp(argv[1], "del", sizeof(argv[1]) - 1) == 0) {
-	if (argc < 3) {
-	    usage();
-	    return -1;
-	}
-        int todo_number = strtol(argv[2], &int_conv, 0);
+    else if (strncmp(cmd, "del", strlen(cmd)) == 0) {
+        if (argc < 3) {
+            usage();
+            return -1;
+        }
+        char *num = argv[2];
+        int todo_number = strtol(num, &int_conv, 0);
         delete_todo(todo_number, tododir);
     }
-    else if (strncmp(argv[1], "update", sizeof(argv[1]) - 1) == 0) {
-	if (argc < 4) {
-	    usage();
-	    return -1;
-	}
-        int todo_number = strtol(argv[2], &int_conv, 0);
+    else if (strncmp(cmd, "update", strlen(cmd)) == 0) {
+        if (argc < 4) {
+            usage();
+            return -1;
+        }
+        char *num = argv[2];
+        int todo_number = strtol(num, &int_conv, 0);
         update_todo(todo_number, argc, argv, tododir);
     }
-    else if (strncmp(argv[1], "done", sizeof(argv[1]) - 1) == 0) {
-	if (argc < 3) {
-	    usage();
-	    return -1;
-	}
-        int todo_number = strtol(argv[2], &int_conv, 0);
+    else if (strncmp(cmd, "done", strlen(cmd)) == 0) {
+        if (argc < 3) {
+            usage();
+            return -1;
+        }
+        char *num = argv[2];
+        int todo_number = strtol(num, &int_conv, 0);
         complete_todo(todo_number, tododir);
     }
     else {
-	usage();
+        usage();
     }
-
 
     return 0;
 }
@@ -110,7 +112,7 @@ void list_todos(char* todo_file) {
     }
     FILE* fp = fopen(todo_file, "r");
     if (fp == NULL) {
-	perror("Unable to open file");
+        perror("Unable to open file");
     }
     int count = 1;
     char todo[4096];
@@ -266,7 +268,7 @@ void complete_todo(int todo_num, char* todo_file) {
     FILE* tmp = tmpfile();
 
     if (tmp == NULL) {
-	perror("Unable to create temp file");
+        perror("Unable to create temp file");
         fclose(fp);
         return;
     }
@@ -291,11 +293,11 @@ void complete_todo(int todo_num, char* todo_file) {
 
     FILE* f = fopen(todo_file, "w+");
     if (f == NULL) {
-	perror("Error opening file");
+        perror("Error opening file");
         fclose(tmp);
         return;
     }
-    
+
     rewind(tmp);
 
     for (int i = 0; i < lines; i++) {
@@ -325,10 +327,6 @@ int get_lines_in_file(char* todo_file) {
     fclose(fp);
 
     return count;
-}
-
-void clear_screen() {
-    printf("\e[1;1H\e[2]");
 }
 
 void usage() {
