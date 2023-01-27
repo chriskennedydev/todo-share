@@ -118,7 +118,6 @@ void list_todos(char* todo_file) {
     char todo[4096];
 
 
-    system("clear");
     printf("Todo List\n");
     printf("---------\n");
 
@@ -134,6 +133,7 @@ void list_todos(char* todo_file) {
         count++;
     }
 
+    printf("---------\n");
     fclose(fp);
 }
 
@@ -169,9 +169,9 @@ void delete_todo(int todo_num, char* todo_file) {
 
     fclose(fp);
 
-    FILE* f = fopen(todo_file, "w+");
+    FILE* rf = fopen(todo_file, "w+");
 
-    if (f == NULL) {
+    if (rf == NULL) {
         perror("Unable to open file");
         fclose(tmp);
         return;
@@ -180,10 +180,10 @@ void delete_todo(int todo_num, char* todo_file) {
     rewind(tmp);
     for (int i = 0; i < lines; i++) {
         if (fgets(todo, sizeof(todo), tmp) != NULL) {
-            fprintf(f, "%s", todo);
+            fprintf(rf, "%s", todo);
         }
     }
-    fclose(f);
+    fclose(rf);
     fclose(tmp);
 }
 
@@ -234,8 +234,8 @@ void update_todo(int todo_num, int todo_length, char** new_todo, char* todo_file
     }
     fclose(fp);
 
-    FILE* f = fopen(todo_file, "w+");
-    if (f == NULL) {
+    FILE* rf = fopen(todo_file, "w+");
+    if (rf == NULL) {
         perror("Unable to open file");
         fclose(tmp);
         return;
@@ -245,10 +245,10 @@ void update_todo(int todo_num, int todo_length, char** new_todo, char* todo_file
 
     for (int i = 0; i < lines; i++) {
         if (fgets(todo, sizeof(todo), tmp) != NULL) {
-            fprintf(f, "%s", todo);
+            fprintf(rf, "%s", todo);
         }
     }
-    fclose(f);
+    fclose(rf);
     fclose(tmp);
 }
 
@@ -291,8 +291,8 @@ void complete_todo(int todo_num, char* todo_file) {
 
     fclose(fp);
 
-    FILE* f = fopen(todo_file, "w+");
-    if (f == NULL) {
+    FILE* rf = fopen(todo_file, "w+");
+    if (rf == NULL) {
         perror("Error opening file");
         fclose(tmp);
         return;
@@ -302,11 +302,11 @@ void complete_todo(int todo_num, char* todo_file) {
 
     for (int i = 0; i < lines; i++) {
         if (fgets(todo, sizeof(todo), tmp) != NULL) {
-            fprintf(f, "%s", todo);
+            fprintf(rf, "%s", todo);
         }
     }
 
-    fclose(f);
+    fclose(rf);
     fclose(tmp);
 }
 
