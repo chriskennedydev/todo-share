@@ -2,7 +2,7 @@ CC = gcc
 BIN = todo
 SRC = *.c
 SRCDIR = src
-D_FLAGS = -g -Wall -Wfatal-errors -Werror -Wextra -fanalyzer
+D_FLAGS = -g -Wall -Wfatal-errors -Werror -Wextra
 R_FLAGS = -Wall -Wfatal-errors -Wextra -O3
 PKGDIR = pkg
 

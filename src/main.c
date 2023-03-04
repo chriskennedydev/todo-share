@@ -1,29 +1,39 @@
 #define GREEN "\033[32m"
+#define RED "\033[31m"
 #define RESET "\033[0m"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <time.h>
 
-void add_todo(int todo_length, char** todo, char* todo_file);
-void list_todos(char* todo_file);
-void delete_todo(int todo_num, char* todo_file);
-void update_todo(int todo_num, int todo_length, char** new_todo, char* todo_file);
-void complete_todo(int todo_num, char* todo_file);
-int get_lines_in_file(char* todo_file);
+void add_todo(int todo_length, char **todo, char *todo_file);
+void list_todos(char *todo_file);
+void delete_todo(int todo_num, char *todo_file);
+void update_todo(int todo_num, int todo_length, char **new_todo, char *todo_file);
+void complete_todo(int todo_num, char *todo_file);
+int get_lines_in_file(char *todo_file);
 void usage();
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     if (argc == 1) {
         usage();
         return -1;
     }
 
-    char* homedir = getenv("HOME");
+    char *homedir = getenv("HOME");
     char tododir[4096];
-    char* int_conv;
+    char *int_conv;
     struct stat st = {0};
+    time_t now;
+    struct tm *clock;
+    char time_string[64];
+
+    time(&now);
+    clock = localtime(&now);
+
+    strftime(time_string, sizeof(time_string), "%A, %B %d, %Y -- %r%n", clock);
 
     strncpy(tododir, homedir, sizeof(tododir) - 1);
     strncat(tododir, "/.todo", sizeof(tododir) - 1);
@@ -41,6 +51,7 @@ int main(int argc, char** argv) {
         add_todo(argc, argv, tododir);
     }
     else if (strncmp(cmd, "list", strlen(cmd)) == 0) {
+        printf("%s", time_string);
         list_todos(tododir);
     }
     else if (strncmp(cmd, "del", strlen(cmd)) == 0) {
@@ -77,13 +88,13 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-void add_todo(int todo_length, char** todo, char* todo_file) {
-    FILE* fp;
+void add_todo(int todo_length, char **todo, char *todo_file) {
+    FILE *fp;
     fp = fopen(todo_file, "a+");
     char long_todo[4096] = { '\0' };
 
     if (fp == NULL) {
-        perror("File not found");
+        perror(RED "File not found" RESET);
         return;
     }
 
@@ -107,12 +118,12 @@ void add_todo(int todo_length, char** todo, char* todo_file) {
 void list_todos(char* todo_file) {
     int lines = get_lines_in_file(todo_file);
     if (lines == -1) {
-        perror("Need to create a todo first");
+        perror(RED "Need to create a todo first" RESET);
         return;
     }
-    FILE* fp = fopen(todo_file, "r");
+    FILE *fp = fopen(todo_file, "r");
     if (fp == NULL) {
-        perror("Unable to open file");
+        perror(RED "Unable to open file" RESET);
     }
     int count = 1;
     char todo[4096];
@@ -133,27 +144,26 @@ void list_todos(char* todo_file) {
         count++;
     }
 
-    printf("---------\n");
     fclose(fp);
 }
 
-void delete_todo(int todo_num, char* todo_file) {
+void delete_todo(int todo_num, char *todo_file) {
     int lines = get_lines_in_file(todo_file);
     if (lines == -1) {
-        perror("Need to create a todo first");
+        perror(RED "Need to create a todo first" RESET);
         return;
     }
     int counter = 1;
     char todo[4096];
-    FILE* fp = fopen(todo_file, "r");
+    FILE *fp = fopen(todo_file, "r");
     if (fp == NULL) {
-        perror("Unable to open file");
+        perror(RED "Unable to open file" RESET);
         return;
     }
-    FILE* tmp = tmpfile();
+    FILE *tmp = tmpfile();
 
     if (tmp == NULL) {
-        perror("Unable to create temp file");
+        perror(RED "Unable to create temp file" RESET);
         fclose(fp);
         return;
     }
@@ -169,10 +179,10 @@ void delete_todo(int todo_num, char* todo_file) {
 
     fclose(fp);
 
-    FILE* rf = fopen(todo_file, "w+");
+    FILE *rf = fopen(todo_file, "w+");
 
     if (rf == NULL) {
-        perror("Unable to open file");
+        perror(RED "Unable to open file" RESET);
         fclose(tmp);
         return;
     }
@@ -187,24 +197,24 @@ void delete_todo(int todo_num, char* todo_file) {
     fclose(tmp);
 }
 
-void update_todo(int todo_num, int todo_length, char** new_todo, char* todo_file) {
+void update_todo(int todo_num, int todo_length, char **new_todo, char *todo_file) {
     int lines = get_lines_in_file(todo_file);
     if (lines == -1) {
-        perror("Need to create a todo first");
+        perror(RED "Need to create a todo first" RESET);
         return;
     }
     int counter = 1;
     char todo[4096];
     char long_todo[4096] = { '\0' };
-    FILE* fp = fopen(todo_file, "r");
+    FILE *fp = fopen(todo_file, "r");
     if (fp == NULL) {
-        perror("Unable to open file");
+        perror(RED "Unable to open file" RESET);
         return;
     }
-    FILE* tmp = tmpfile();
+    FILE *tmp = tmpfile();
 
     if (tmp == NULL) {
-        perror("Unable to open temp file");
+        perror(RED "Unable to open temp file" RESET);
         fclose(fp);
         return;
     }
@@ -234,9 +244,9 @@ void update_todo(int todo_num, int todo_length, char** new_todo, char* todo_file
     }
     fclose(fp);
 
-    FILE* rf = fopen(todo_file, "w+");
+    FILE *rf = fopen(todo_file, "w+");
     if (rf == NULL) {
-        perror("Unable to open file");
+        perror(RED "Unable to open file" RESET);
         fclose(tmp);
         return;
     }
@@ -252,23 +262,23 @@ void update_todo(int todo_num, int todo_length, char** new_todo, char* todo_file
     fclose(tmp);
 }
 
-void complete_todo(int todo_num, char* todo_file) {
+void complete_todo(int todo_num, char *todo_file) {
     int lines = get_lines_in_file(todo_file);
     if (lines == -1) {
-        perror("Need to create a todo first");
+        perror(RED "Need to create a todo first" RESET);
         return;
     }
     int counter = 1;
     char todo[4096];
-    FILE* fp = fopen(todo_file, "r");
+    FILE *fp = fopen(todo_file, "r");
     if (fp == NULL) {
-        perror("Error opening file");
+        perror(RED "Error opening file" RESET);
         return;
     }
-    FILE* tmp = tmpfile();
+    FILE *tmp = tmpfile();
 
     if (tmp == NULL) {
-        perror("Unable to create temp file");
+        perror(RED "Unable to create temp file" RESET);
         fclose(fp);
         return;
     }
@@ -291,9 +301,9 @@ void complete_todo(int todo_num, char* todo_file) {
 
     fclose(fp);
 
-    FILE* rf = fopen(todo_file, "w+");
+    FILE *rf = fopen(todo_file, "w+");
     if (rf == NULL) {
-        perror("Error opening file");
+        perror(RED "Error opening file" RESET);
         fclose(tmp);
         return;
     }
@@ -310,8 +320,8 @@ void complete_todo(int todo_num, char* todo_file) {
     fclose(tmp);
 }
 
-int get_lines_in_file(char* todo_file) {
-    FILE* fp = fopen(todo_file, "r");
+int get_lines_in_file(char *todo_file) {
+    FILE *fp = fopen(todo_file, "r");
     int count = 0;
 
     if (fp == NULL) {
